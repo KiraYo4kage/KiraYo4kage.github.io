@@ -1,0 +1,37 @@
+---
+title: 实现一个粘性头部组件
+date: 2019-10-21
+tags: [前端练习, banned]
+excerpt: 粘性头部是一种(StickyHeader)在长列表中比较常用的组件，那么如何用优雅地实现一个react粘性头部组件呢？
+---
+
+  粘性头部是一种(StickyHeader)在长列表中比较常用的组件，那么如何实现一个react粘性头部组件呢？
+
+  -----
+  
+  如何实现XXX的问题一概参照将大象塞进冰箱需要几步：
+  
+  ## 构建一个简单的长列表。
+
+  ```js
+  export default ({ listData }) => {
+    return (
+      <div className="long-list">
+        {(listData || []).map(({ cate, content }, index, arr) => (
+          <Fragment key={content + index}>
+            {(arr[index - 1] || {}).cate !== cate && (
+              <div className="list-cate">{cate}</div>
+            )}
+            <div className="list-item">{content}</div>
+          </Fragment>
+        ))}
+      </div>
+    );
+  };
+  ```
+
+  效果如下：
+  
+  ![一个简单的长列表效果](./long-list-base.png)
+
+

@@ -18,6 +18,8 @@ const PostsTemplate = require.resolve(`./src/gatsby-theme-blog/templates/posts`)
 
 // create a set to reserve all posts' tags
 let tagSet = new Set()
+// create a list to reserve all legal posts
+let legalPosts = [];
 
 // Ensure that content directories exist at site-level
 exports.onPreBootstrap = ({ store }, themeOptions) => {
@@ -92,9 +94,10 @@ exports.sourceNodes = ({ actions, schema }) => {
   )
 }
 
-exports.createPages = async ({ graphql, actions, reporter }) => {
-  const { createPage } = actions
-
+exports.createPages = async ({ graphql, actions, reporter }, { path }) => {
+  const { createPage, deletePage } = actions
+  console.log('deletepage is :', deletePage)
+  console.log('path is :', path)
   const result = await graphql(`
     {
       site {
@@ -137,9 +140,21 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
   const { title: siteTitle, social: socialLinks } = siteMetadata
 
   // Create a page for each Post
-  posts.forEach(({ node: post }, index) => {
-    const previous = index === posts.length - 1 ? null : posts[index + 1]
-    const next = index === 0 ? null : posts[index - 1]
+  legalPosts = posts.filter(({ node: post }) => {
+    const { slug, tags } = post;
+    if (tags.includes('banned')) {
+      deletePage({
+        path: slug,
+        component: PostTemplate,
+      })
+      return false;
+    }
+    return true;
+  })
+
+  legalPosts.forEach(({ node: post }, index) => {
+    const previous = index === legalPosts.length - 1 ? null : legalPosts[index + 1]
+    const next = index === 0 ? null : legalPosts[index - 1]
     const { slug, tags } = post
     tags.forEach(tagSet.add.bind(tagSet))
     createPage({
@@ -232,6 +247,7 @@ exports.onCreatePage = async ({ page, actions }) => {
       ...page,
       context: {
         ...page.context,
+        posts: legalPosts,
         tags: Array.from(tagSet),
       },
     })

@@ -5,6 +5,13 @@ module.exports = {
       resolve: `gatsby-theme-blog`,
       options: {},
     },
+    {
+      resolve: 'gatsby-plugin-mdx',
+      options: {
+        gatsbyRemarkPlugins: [`gatsby-remark-images`, 'gatsby-remark-copy-linked-files'],
+        plugins: [`gatsby-remark-images`, 'gatsby-remark-copy-linked-files'],
+      }
+    },
   ],
   // Customize your site metadata:
   siteMetadata: {

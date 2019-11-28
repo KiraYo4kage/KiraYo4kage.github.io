@@ -1,6 +1,7 @@
 import React from "react"
 import { css, Styled } from "theme-ui"
 import Header from "./header"
+import "./layout.css"
 
 export default ({ children, ...props }) => (
   <Styled.root>
